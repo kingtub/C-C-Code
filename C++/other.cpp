@@ -4,11 +4,13 @@ using namespace std;
 
 void test1();
 void test2();
+void test3();
 
 int main()
 {
 	//test1();
-	test2();
+	// test2();
+	test3();
 	return 0;
 }
 
@@ -25,4 +27,9 @@ void test1() {
 void test2() {
 	int i(5);
 	cout<< i<<endl;
+}
+
+void test3() {
+	for(int i = 1; i <= 0x7F; i++)
+	cout<<(char)i<<" ";
 }
