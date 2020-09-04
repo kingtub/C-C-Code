@@ -1,13 +1,16 @@
 #include<iostream>
 #include<vector>
+#include<string>
 
 using namespace std;
 
 void test1(); 
+void test2(); 
 
 int main()
 {
-	test1();
+	//test1();
+	test2();
 	return 0;
 }
 
@@ -32,4 +35,13 @@ void test1() {
 	}
 	cout<<endl;
 }
+
+void test2() {
+	vector<string> ss/*
+(const string &a)*/;
+	
+	ss.push_back("he");
+	ss.push_back("llo");
+	cout<<ss.back()<<endl;
+} 
 
