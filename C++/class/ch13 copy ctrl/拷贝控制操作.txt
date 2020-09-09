@@ -1,0 +1,5 @@
+1、copy constructor
+2、copy-assignment operator
+3、move constructor
+4、move-assignment operator
+5、destructor 裂更痕方

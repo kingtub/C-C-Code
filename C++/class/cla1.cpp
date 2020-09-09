@@ -1,26 +1,30 @@
 #include<iostream>
-#include<vector>
 
 using namespace std;
-
-string getMsg();
-vector<string> f1();
 
 class A {
 	public:
 	A() {
 		countIns++;
-		cout<<"A default constructor, countIns="<<countIns<<endl;
+		id = countIns;
+		cout<<"A default constructor, id="<<id<<endl;
 	}
+	
+	// Îö¹¹º¯Êý 
+	~A() {
+		cout<<"DeInit, id="<<id<<endl;
+	} 
 	
 	A(int n):num(n) {
 		countIns++;
-		cout<<"A constructor 2, countIns="<<countIns<<endl;
+		id = countIns;
+		cout<<"A constructor 2, id="<<id<<endl;
 	}
 	
 	A(const A& other) {
 		countIns++;
-		cout<<"A copy constructor, countIns="<<countIns<<endl;
+		id = countIns;
+		cout<<"A copy constructor, id="<<id<<endl;
 	}
 	
 	int getNum() const {
@@ -35,6 +39,7 @@ class A {
 	static unsigned int countIns;
 	int num = 2;
 	const static char c = 'C';
+	int id;
 };
 unsigned int A::countIns = 0;
 
@@ -42,17 +47,7 @@ A getA();
 A getA2(int num);
 
 int main()
-{
-	vector<string> v1 = f1();
-	
-	for(auto &o:v1) {
-		cout<<o<<" ";
-	}
-	cout<<endl;
-	
-    string s = getMsg();
-	cout<<s<<endl;
-	
+{	
 	A a = getA();
 	cout<<"getA() num="<<a.getNum()<<endl;
 	
@@ -63,19 +58,6 @@ int main()
 	cout<<"assign num="<<c.getNum()<<endl;
 	return 0;
 } 
-
-vector<string> f1()
-{
-	return {
-		"v1", "v2", "v3"
-	};
-}
-
-string getMsg()
-{
-	string s = "abc";
-	return s;
-}
 
 A getA() {
 	A a;
