@@ -25,9 +25,9 @@ void test2();
 
 int main()
 {
-	//test1();
+	test1();
 	
-	test2(); 
+	// test2(); 
 	return 0;
 }
 
@@ -52,6 +52,7 @@ void test1()
 		count += ip[i];
 	}
 	cout<<count<<endl;
+	delete[] ip;
 }
 
 void test2()
