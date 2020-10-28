@@ -4,9 +4,12 @@
 using namespace std;
 
 void test1();
+void test2(); 
 int main()
 {
-	test1();
+	//test1();
+	
+	test2();
 	return 0;
 }
 
@@ -24,3 +27,11 @@ void test1() {
     cout<<(b?"yes":"no")<<endl;
 }
 
+void test2()
+{
+	string s = "abcdefghij";
+	for(string::iterator b = s.begin(); b != s.end(); b++) {
+		cout<<*b<<" ";
+	}
+	cout<<endl;
+}
