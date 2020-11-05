@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string>
 using namespace std;
 
 template <typename T>
@@ -22,4 +23,8 @@ void print_map(const T &t, const char *white="\n")
 		
 		cb++;
 	}
+}
+
+string to_bool_str(bool b) {
+	return b ? "true":"false";
 }
