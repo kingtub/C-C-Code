@@ -93,6 +93,9 @@ class D {
 	void dd() const {
 		cout<<"I am dd"<<endl;
 	}
+	void gg() {
+		cout<<"I am gg of D"<<endl;
+	}
 };
 void const_test()
 {
@@ -105,4 +108,6 @@ void const_test()
 	
 	D d;
 	d.dd();
+	const D dg;
+	//dg.gg(); // Compilation Failed
 }
