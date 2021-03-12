@@ -18,49 +18,54 @@ ostream& operator<<(ostream &o, const request & req) {
 	return o;
 }
 
-template <typename T>
-class SyncQueue {
+template<typename T>
+class SyncBag {
 	public:
-	SyncQueue() = default;
-	void addLast(const T &t);
-	T removeFirst();
-	
+	explicit SyncBag(int fixedSize):fixedSize(fixedSize) {
+		
+	}
+	void addLast(const T & t);
+	T removeFirst(); 
 	private:
-	deque<T> q;
+	int fixedSize;
 	mutex mut;
 	condition_variable cond;
+	deque<T> q;
 };
 
 template<typename T>
-void SyncQueue<T>::addLast(const T &t) {
-	lock_guard<mutex> lm(mut);
+void SyncBag<T>::addLast(const T &t) {
+	unique_lock<mutex> um(mut);
+	while(q.size() >= fixedSize) {
+		cout<<"Full, wait, size="<<q.size()<<endl;
+		cond.wait(um);
+	}
 	q.push_back(t);
+	um.unlock();
 	cond.notify_all();
 }
 
 template<typename T>
-T SyncQueue<T>::removeFirst() {
-	unique_lock<mutex> ul(mut);
+T SyncBag<T>::removeFirst() {
+	unique_lock<mutex> um(mut);
 	while(q.empty()) {
-		cond.wait(ul);
-	} 
-	//cond.wait(ul, [q]{return !q.empty();});
-	T result = q.front();
+		cout<<"Empty, wait"<<endl;
+		cond.wait(um);
+	}
+	T t = q.front();
 	q.pop_front();
-	ul.unlock();
-	return result;
+	um.unlock();
+	cond.notify_all();
+	return t;
 }
 
-SyncQueue<request> que;
-void make_thread()
-{
+SyncBag<request> bag(5);
+void produder_thread() {
 	thread::id myid = this_thread::get_id();
     // 产生随机数通常需要 随机数引擎类对象 和 随机数分布类对象来配合 
 	chrono::system_clock::time_point tp = chrono::high_resolution_clock::now();
 	chrono::system_clock::duration dtn = tp.time_since_epoch();
 	unsigned long seed = dtn.count() + 5;
-	//cout<<"make_thread, seed = "<<seed<<endl;
-	//this_thread::sleep_for(chrono::milliseconds(50));
 	
 	//  随机数引擎类对象
 	default_random_engine generator(seed);
@@ -75,9 +80,9 @@ void make_thread()
 		string s = "data ";
 		req.data = s + to_string(i); 
 		req.no = i;
-		cout<<"thread "<<myid<<" requests "<<req<<endl;
-		que.addLast(req);
-		this_thread::sleep_for(chrono::milliseconds(lo));
+		cout<<"thread "<<myid<<" produced "<<req<<endl;
+		bag.addLast(req);
+		//this_thread::sleep_for(chrono::milliseconds(lo));
 	}
 }
 
@@ -88,8 +93,6 @@ void consumer_thread() {
 	chrono::system_clock::time_point tp = chrono::high_resolution_clock::now();
 	chrono::system_clock::duration dtn = tp.time_since_epoch();
 	unsigned long seed = dtn.count();
-	//cout<<"consumer_thread, seed = "<<seed<<endl;
-	//this_thread::sleep_for(chrono::milliseconds(50));
 	
 	//  随机数引擎类对象
 	default_random_engine generator(seed);
@@ -100,22 +103,21 @@ void consumer_thread() {
 		// 将uid作为随机数源
 		// 每个调用产生在指定范围内服从均匀分布的随机数 
 		long lo = uid(generator);
-		request req = que.removeFirst();
-		cout<<"thread "<<myid<<" Processes "<<req<<endl;
+		request req = bag.removeFirst();
+		cout<<"thread "<<myid<<" consumed "<<req<<endl;
 		this_thread::sleep_for(chrono::milliseconds(lo));
 	}
+	
 }
 
-int main() {
-	
-	//thread t1(make_thread);
-	//thread t2(consumer_thread);
-	
-	future<void> t1 = async(launch::async, make_thread);
-	future<void> t2 = async(launch::async, consumer_thread);
-	// 等它们运行完了再结束 
-	t1.get();
-	t2.get();
 
+int main()
+{
+	future<void> t1  = async(launch::async, produder_thread);
+	future<void> t2  = async(launch::async, consumer_thread);
+	// 等到它们运行完成才结束
+	t1.get();
+	t2.get(); 
+	
 	return 0;
 }
