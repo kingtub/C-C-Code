@@ -5,7 +5,7 @@
 #include<string>
 
 #include<algorithm>
-#include"..\ch09 Sequence containers\my_util.hpp"
+#include"../ch09 Sequence containers/my_util.hpp"
 
 using namespace std;
 
