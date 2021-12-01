@@ -1,0 +1,6 @@
+指定c++版本 可以用 -std=xxx 指定
+-std=c++98
+-std=c++99
+-std=c++11
+-std=c++14
+-std=c++17
